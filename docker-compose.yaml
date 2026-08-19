@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    volumes:
+      - mysql-db:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: rocketseat-db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: root
+    networks:
+      - api-rocket
+
+  api-rocket:
+    build:
+      context: . #Se o dockerfile estiver em outra pasta, é só colocar o caminho relativo
+    container_name: api-rocket
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mysql # Só garante que o container do mysql seja iniciado antes do container da api-rocket
+    networks:
+      - api-rocket
+
+# wait-for-it:
+    
+networks:
+  api-rocket:
+    name: api-rocket
+    external: true
+    driver: bridge
+
+volumes:
+  mysql-db:
