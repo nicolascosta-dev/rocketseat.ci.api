@@ -43,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: costtanicolas/rocketseat-ci-api:{{ steps.generate_tag.outputs.sha }}, costtanicolas/rocketseat-ci-api:latest
+          tags: costtanicolas/rocketseat-ci-api:{{ steps.generate_tag.outputs.sha }},costtanicolas/rocketseat-ci-api:latest
 
       # - name: Build Docker image
       #   run: docker build -t costtanicolas/rocketseat-ci-api:{{ steps.generate_tag.outputs.sha }} .
