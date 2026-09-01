@@ -1,0 +1,48 @@
+name: Docker CI
+
+# Trigger
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    name: 'Build and Push'
+    runs-on: ubuntu-latest
+    # strategy:
+    #   matrix:
+    #     node: [ 16, 18, 20 ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          # node-version: {{ matrix.node }}
+          node-version: 18
+          cache: 'npm'
+      - run: npm install
+      - run: npm test
+
+      - name: Generate tag
+        id: generate_tag
+        run: |
+          SHA=$(echo $GITHUB_SHA | head -c7)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: 'arn:aws:iam::634530189592:role/ecr-role'
+          aws_region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
