@@ -5,6 +5,7 @@ resource "aws_iam_openid_connect_provider" "oidc-git" {
   ]
 
   thumbprint_list = [
+    # comment
     "2b18947a6a9fc7764fd8b5fb18a863b0c6dac24f"
   ]
 
