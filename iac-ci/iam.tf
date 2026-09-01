@@ -32,8 +32,7 @@ resource "aws_iam_role" "ecr-role" {
         },
         "StringLike" : {
           "token.actions.githubusercontent.com:sub" : [
-            "repo:nicolascosta-dev/rocketseat.ci.cpi:ref:refs/heads/main",
-            "repo:nicolascosta-dev/rocketseat.ci.cpi:ref:refs/heads/main"
+            "repo:nicolascosta-dev/rocketseat.ci.api:*",
           ]
         }
       }
