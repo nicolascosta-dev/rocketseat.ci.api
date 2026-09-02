@@ -36,6 +36,16 @@ jobs:
         run: |
           SHA=$(echo $GITHUB_SHA | head -c7)
           echo "sha=$SHA" >> $GITHUB_OUTPUT
+
+      - name: DEBUG OIDC claims
+        run: |
+          echo "Owner: ${{ github.repository_owner }}"
+          echo "Repo: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "O campo SUB na AWS DEVE SER EXATAMENTE ESSE:"
+          echo "repo:${{ github.repository }}:*"
+          echo "--- ou ---"
+          echo "repo:${{ github.repository }}:ref:${{ github.ref }}"
         
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
