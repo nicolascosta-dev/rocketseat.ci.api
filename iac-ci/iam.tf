@@ -1,11 +1,11 @@
 resource "aws_iam_openid_connect_provider" "oidc-git" {
   url = "https://token.actions.githubusercontent.com"
-  
   client_id_list = [
     "sts.amazonaws.com"
   ]
 
   thumbprint_list = [
+    # comment
     "2b18947a6a9fc7764fd8b5fb18a863b0c6dac24f"
   ]
 
@@ -23,8 +23,7 @@ resource "aws_iam_role" "ecr-role" {
       "Effect" : "Allow",
       "Action" : "sts:AssumeRoleWithWebIdentity",
       "Principal" : {
-        # Referência dinâmica apontando para o recurso OIDC criado acima
-        "Federated" : aws_iam_openid_connect_provider.oidc-git.arn
+        "Federated" : "arn:aws:iam::634530189592:oidc-provider/token.actions.githubusercontent.com"
       },
       "Condition" : {
         "StringEquals" : {
@@ -34,7 +33,7 @@ resource "aws_iam_role" "ecr-role" {
         },
         "StringLike" : {
           "token.actions.githubusercontent.com:sub" : [
-            "repo:nicolascosta-dev/rocketseat.ci.api:*"
+            "repo:nicolascosta-dev/rocketseat.ci.api:*",
           ]
         }
       }
@@ -46,13 +45,13 @@ resource "aws_iam_role" "ecr-role" {
   }
 }
 
-# Política separada para evitar o warning de "inline_policy is deprecated"
 resource "aws_iam_role_policy" "ecr_app_permission" {
   name = "ecr_app_permission"
-  role = aws_iam_role.ecr-role.id # Vincula esta política à Role criada acima
+  role = aws_iam_role.ecr-role.name
 
   policy = jsonencode({
     Version = "2012-10-17"
+
     Statement = [
       {
         Sid = "Statement1"
@@ -66,7 +65,7 @@ resource "aws_iam_role_policy" "ecr_app_permission" {
           "ecr:CompleteLayerUpload",
           "ecr:GetAuthorizationToken",
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = "*"
       },
     ]
