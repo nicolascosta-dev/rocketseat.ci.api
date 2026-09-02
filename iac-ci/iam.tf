@@ -1,13 +1,13 @@
-resource "aws_iam_openid_connect_provider" "oidc-git" {
-  url = "https://token.actions.githubusercontent.com"
-  client_id_list = [
-    "sts.amazonaws.com"
-  ]
+# 1. Busca dinamicamente o certificado atual do GitHub
+data "tls_certificate" "github" {
+  url = "https://token.actions.githubusercontent.com/.well-known/openid-configuration"
+}
 
-  thumbprint_list = [
-    # comment
-    "2b18947a6a9fc7764fd8b5fb18a863b0c6dac24f"
-  ]
+resource "aws_iam_openid_connect_provider" "oidc-git" {
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  # Usa o thumbprint buscado no bloco de dados acima
+  thumbprint_list = [data.tls_certificate.github.certificates[0].sha1_fingerprint]
 
   tags = {
     iac = true
@@ -23,12 +23,16 @@ resource "aws_iam_role" "ecr-role" {
       "Effect" : "Allow",
       "Action" : "sts:AssumeRoleWithWebIdentity",
       "Principal" : {
-        "Federated" : "arn:aws:iam::634530189592:oidc-provider/token.actions.githubusercontent.com"
+        # Usa o ARN do provider gerado no Terraform em vez de chumbado
+        "Federated" : aws_iam_openid_connect_provider.oidc-git.arn
       },
       "Condition" : {
         "StringEquals" : {
-          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:nicolascosta-dev/rocketseat.ci.api:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
+        },
+        "StringLike" : {
+          # ATENÇÃO: Confirme se letras maiúsculas/minúsculas estão EXATAMENTE como no GitHub
+          "token.actions.githubusercontent.com:sub" : "repo:nicolascosta-dev/rocketseat.ci.api:*"
         }
       }
     }]
