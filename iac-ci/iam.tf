@@ -2,9 +2,11 @@ resource "aws_iam_openid_connect_provider" "oidc-git" {
   url             = "https://token.actions.githubusercontent.com"
   client_id_list  = ["sts.amazonaws.com"]
   
-  # Thumbprints oficiais do GitHub Actions suportados pela AWS
+  # Estes são os 3 Thumbprints oficiais e raízes que a AWS aceita hoje para o GitHub
   thumbprint_list = [
-    "ffffffffffffffffffffffffffffffffffffffff"
+    "1b511abead59c6ce207077c0bf0e0043b1382612",
+    "1c58a3a8518e8759bf075b76b750d4f2df264fcd",
+    "6938fd4d98bab03faadb97b34396831e3780aea1"
   ]
 
   tags = {
@@ -21,16 +23,15 @@ resource "aws_iam_role" "ecr-role" {
       "Effect" : "Allow",
       "Action" : "sts:AssumeRoleWithWebIdentity",
       "Principal" : {
-        # Usa o ARN do provider gerado no Terraform em vez de chumbado
         "Federated" : aws_iam_openid_connect_provider.oidc-git.arn
       },
       "Condition" : {
-        # "StringEquals" : {
-        #   "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-        # },
-        "StringLike" : {
-          # ATENÇÃO: Confirme se letras maiúsculas/minúsculas estão EXATAMENTE como no GitHub
-          "token.actions.githubusercontent.com:sub": "repo:nicolascosta-dev/*"
+        "StringEquals" : {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+        },
+        # Ignora letras maiúsculas/minúsculas e trava na branch main
+        "StringEqualsIgnoreCase" : {
+          "token.actions.githubusercontent.com:sub": "repo:nicolascosta-dev/rocketseat.ci.api:ref:refs/heads/main"
         }
       }
     }]
