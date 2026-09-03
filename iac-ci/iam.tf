@@ -23,7 +23,7 @@ resource "aws_iam_role" "ecr-role" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:nicolascosta-dev/rocketseat.ci.api:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:nicolascosta-dev@62070435/rocketseat.ci.api@1340111181:ref:refs/heads/main"
           }
         }
         Effect = "Allow"
