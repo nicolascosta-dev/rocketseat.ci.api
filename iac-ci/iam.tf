@@ -28,11 +28,11 @@ resource "aws_iam_role" "ecr-role" {
       },
       "Condition" : {
         "StringEquals" : {
-          "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
+          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         },
         "StringLike" : {
           # ATENÇÃO: Confirme se letras maiúsculas/minúsculas estão EXATAMENTE como no GitHub
-          "token.actions.githubusercontent.com:sub" : "repo:nicolascosta-dev/rocketseat.ci.api:*"
+          "token.actions.githubusercontent.com:sub" = "repo:nicolascosta-dev/*"
         }
       }
     }]
