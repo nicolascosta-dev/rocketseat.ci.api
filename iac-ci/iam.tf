@@ -26,12 +26,12 @@ resource "aws_iam_role" "ecr-role" {
         "Federated" : aws_iam_openid_connect_provider.oidc-git.arn
       },
       "Condition" : {
-        "StringEquals" : {
-          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-        },
+        # "StringEquals" : {
+        #   "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+        # },
         "StringLike" : {
           # ATENÇÃO: Confirme se letras maiúsculas/minúsculas estão EXATAMENTE como no GitHub
-          "token.actions.githubusercontent.com:sub" = "repo:nicolascosta-dev/*"
+          "token.actions.githubusercontent.com:sub": "repo:nicolascosta-dev/*"
         }
       }
     }]
